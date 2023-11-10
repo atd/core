@@ -9,11 +9,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import discovery
 
 from .const import DOMAIN
-from .entry import Entry
+from .entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.NOTIFY]
+ENTRY_PLATFORMS: list[Platform] = [Platform.NUMBER]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -22,8 +22,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].setdefault("entries", {})
 
-    hass.data[DOMAIN]["entries"][entry.entry_id] = Entry(entry)
+    hass.data[DOMAIN]["entries"][entry.entry_id] = Entity(entry)
 
+    await hass.config_entries.async_forward_entry_setups(entry, ENTRY_PLATFORMS)
     discovery.load_platform(hass, Platform.NOTIFY, DOMAIN, {}, {})
 
     return True
@@ -31,7 +32,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+    if unload_ok := await hass.config_entries.async_unload_platforms(
+        entry, ENTRY_PLATFORMS
+    ):
         entry_id = entry.entry_id
 
         hass.data[DOMAIN]["entries"][entry_id].unload()
