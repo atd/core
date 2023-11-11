@@ -37,6 +37,7 @@ class Volume(NumberEntity):
         self._attr_device_info = entity.device_info
 
         self._entity.on_volume_get_response(self._on_volume_get_response)
+        self._entity.get_volume()
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
@@ -64,6 +65,7 @@ class Brightness(NumberEntity):
         self._attr_device_info = entity.device_info
 
         self._entity.on_brightness_get_response(self._on_brightness_get_response)
+        self._entity.get_brightness()
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""

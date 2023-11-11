@@ -39,15 +39,23 @@ class Entity:
         """Notify by speaking a message."""
         self.client.emit(Message("speak", {"utterance": message, "lang": lang}))
 
+    def get_volume(self) -> None:
+        """Trigger OVOS get volume response."""
+        self.client.emit(Message("mycroft.volume.get"))
+
     def set_volume(self, value: float) -> None:
         """Set OVOS device volume."""
         self.client.emit(Message("mycroft.volume.set", {"percent": value}))
+
+    def get_brightness(self) -> None:
+        """Trigger OVOS get brightness response."""
+        self.client.emit(Message("phal.brightness.control.get"))
 
     def set_brightness(self, value: float) -> None:
         """Set OVOS device brightness."""
         self.client.emit(Message("phal.brightness.control.set", {"brightness": value}))
         # Trigger read. This is not auto-triggered like volume does
-        self.client.emit(Message("phal.brightness.control.get"))
+        self.get_brightness()
 
     def on_volume_get_response(self, callback: Callable[[Message], None]) -> None:
         """Call callback when OVOS device's volume changes."""
