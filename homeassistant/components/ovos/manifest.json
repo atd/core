@@ -1,6 +1,6 @@
 {
   "domain": "ovos",
-  "name": "ovos",
+  "name": "OVOS",
   "codeowners": ["@atd"],
   "config_flow": true,
   "dependencies": [],
