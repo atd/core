@@ -20,7 +20,7 @@ async def async_setup_entry(
     """Set up the OVOS number platform."""
 
     entity = hass.data[DOMAIN]["entries"][entry.entry_id]
-    async_add_entities([Volume(entity)])
+    async_add_entities([Volume(entity), Brightness(entity)])
 
 
 class Volume(NumberEntity):
@@ -46,5 +46,32 @@ class Volume(NumberEntity):
 
     def _on_volume_get_response(self, message: Message) -> None:
         self._attr_native_value = message.data["percent"]
+
+        self.async_write_ha_state()
+
+
+class Brightness(NumberEntity):
+    """Representation of OVOS device brightness."""
+
+    _attr_native_min_value = 0
+    _attr_native_max_value = 0.99
+
+    def __init__(self, entity: Entity) -> None:
+        """Initialize the Ovos Brightness Number entity."""
+        self._entity = entity
+        self._attr_unique_id = f"{entity.name}_brightness"
+        self._attr_name = f"{entity.name} Brightness"
+        self._attr_device_info = entity.device_info
+
+        self._entity.on_brightness_get_response(self._on_brightness_get_response)
+
+    async def async_set_native_value(self, value: float) -> None:
+        """Update the current value."""
+        self._entity.set_brightness(value)
+
+        self.async_write_ha_state()
+
+    def _on_brightness_get_response(self, message: Message) -> None:
+        self._attr_native_value = message.data["brightness"] / 100
 
         self.async_write_ha_state()

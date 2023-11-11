@@ -43,9 +43,19 @@ class Entity:
         """Set OVOS device volume."""
         self.client.emit(Message("mycroft.volume.set", {"percent": value}))
 
+    def set_brightness(self, value: float) -> None:
+        """Set OVOS device brightness."""
+        self.client.emit(Message("phal.brightness.control.set", {"brightness": value}))
+        # Trigger read. This is not auto-triggered like volume does
+        self.client.emit(Message("phal.brightness.control.get"))
+
     def on_volume_get_response(self, callback: Callable[[Message], None]) -> None:
         """Call callback when OVOS device's volume changes."""
         self.client.on("mycroft.volume.get.response", callback)
+
+    def on_brightness_get_response(self, callback: Callable[[Message], None]) -> None:
+        """Call callback when OVOS device's brightness changes."""
+        self.client.on("phal.brightness.control.get.response", callback)
 
     def unload(self) -> None:
         """Close connection."""
