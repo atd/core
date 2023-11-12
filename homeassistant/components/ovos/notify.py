@@ -35,7 +35,7 @@ class OvosNotificationService(BaseNotificationService):
         """Send a message to OVOS/Neon to speak on instance."""
         for _entry_id, entity in self.config["entries"].items():
             try:
-                entity.notify(message, lang, **kwargs)
+                entity.emit("speak", {"utterance": message, "lang": lang})
             except ConnectionRefusedError:
                 _LOGGER.error("Could not reach this instance of OVOS")
             except ValueError:

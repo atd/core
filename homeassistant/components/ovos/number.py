@@ -36,12 +36,12 @@ class Volume(NumberEntity):
         self._attr_name = f"{entity.name} Volume"
         self._attr_device_info = entity.device_info
 
-        self._entity.on_volume_get_response(self._on_volume_get_response)
-        self._entity.get_volume()
+        self._entity.on("mycroft.volume.get.response", self._on_volume_get_response)
+        self._entity.emit("mycroft.volume.get")
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        self._entity.set_volume(value)
+        self._entity.emit("mycroft.volume.set", {"percent": value})
 
         self.async_write_ha_state()
 
@@ -64,12 +64,16 @@ class Brightness(NumberEntity):
         self._attr_name = f"{entity.name} Brightness"
         self._attr_device_info = entity.device_info
 
-        self._entity.on_brightness_get_response(self._on_brightness_get_response)
-        self._entity.get_brightness()
+        self._entity.on(
+            "phal.brightness.control.get.response", self._on_brightness_get_response
+        )
+        self._entity.emit("phal.brightness.control.get")
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        self._entity.set_brightness(value)
+        self._entity.emit("phal.brightness.control.set", {"brightness": value})
+        # Trigger read. This is not auto-triggered like volume does
+        self._entity.emit("phal.brightness.control.get")
 
         self.async_write_ha_state()
 
