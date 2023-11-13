@@ -13,7 +13,7 @@ from .entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
-ENTRY_PLATFORMS: list[Platform] = [Platform.NUMBER, Platform.SELECT]
+ENTRY_PLATFORMS: list[Platform] = [Platform.NUMBER, Platform.SELECT, Platform.TEXT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
