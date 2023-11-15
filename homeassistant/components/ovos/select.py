@@ -20,34 +20,35 @@ async def async_setup_entry(
     """Set up the OVOS select platform."""
 
     entity = hass.data[DOMAIN]["entries"][entry.entry_id]
-    async_add_entities([GuiPage(entity)])
+    async_add_entities([HomescreenPage(entity)])
 
 
 PAGES = ["night_time", "main", "boxes"]
 
 
-class GuiPage(SelectEntity):
+class HomescreenPage(SelectEntity):
     """Representation of OVOS Main View Page."""
 
     def __init__(self, entity: Entity) -> None:
-        """Initialize the Ovos GuiPage select entity."""
+        """Initialize the Ovos HomeScreenPage select entity."""
         self._entity = entity
-        self._attr_unique_id = f"{entity.name}_gui_page"
-        self._attr_name = f"{entity.name} GUI Page"
+        self._attr_unique_id = f"{entity.name}_homescreen_page"
+        self._attr_name = f"{entity.name} Homescreen Page"
         self._attr_device_info = entity.device_info
         self._attr_current_option = None
         self._attr_options = PAGES
         self._attr_translation_key = "main_view_page"
 
         self._entity.on(
-            "ovos.gui.main_view.current_index.get.response", self._on_get_response
+            "ovos.homescreen.main_view.current_index.get.response",
+            self._on_get_response,
         )
-        self._entity.emit("ovos.gui.main_view.current_index.get")
+        self._entity.emit("ovos.homescreen.main_view.current_index.get")
 
     async def async_select_option(self, option: str) -> None:
         """Update the current value."""
         self._entity.emit(
-            "ovos.gui.main_view.current_index.set",
+            "ovos.homescreen.main_view.current_index.set",
             {"current_index": PAGES.index(option)},
         )
 
